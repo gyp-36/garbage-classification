@@ -12,12 +12,12 @@ from pathlib import Path
 from PIL import Image
 
 # 配置
-DATA_ROOT = Path("/Users/gyp/Desktop/gabage-category/garbage")
-OUTPUT_ROOT = Path("/Users/gyp/Desktop/gabage-category/data/split")
+DATA_ROOT = Path(__file__).parent.parent / "garbage"
+OUTPUT_ROOT = Path(__file__).parent.parent / "data" / "split"
 IMAGE_SIZE = (224, 224)
 
 # 类别映射文件
-with open("/Users/gyp/Desktop/gabage-category/data/garbage_21classes.json") as f:
+with open(Path(__file__).parent.parent / "data" / "garbage_21classes.json") as f:
     config = json.load(f)
     CLASS_MAPPING = {int(k): v for k, v in config["mapping"].items()}
 
