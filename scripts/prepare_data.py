@@ -42,7 +42,7 @@ def process_image(src_path, dst_path):
         img.save(dst_path)
         return True
     except Exception as e:
-        print(f"Error processing {src_path}: {e}")
+        print(f"处理图像出错 {src_path}: {e}")
         return False
 
 def prepare_dataset():
@@ -56,7 +56,7 @@ def prepare_dataset():
     test_data = load_label_file(DATA_ROOT / "test.txt")
     val_data = load_label_file(DATA_ROOT / "validate.txt")
 
-    print(f"Loaded: train={len(train_data)}, test={len(test_data)}, val={len(val_data)}")
+    print(f"已加载: 训练集={len(train_data)}, 测试集={len(test_data)}, 验证集={len(val_data)}")
 
     # 处理每个数据集
     for split_name, data in [("train", train_data), ("val", val_data), ("test", test_data)]:
@@ -64,7 +64,7 @@ def prepare_dataset():
             src = DATA_ROOT / img_path
             dst = OUTPUT_ROOT / split_name / f"{label}_{i}.jpg"
             process_image(src, dst)
-        print(f"Processed {split_name}: {len(data)} images")
+        print(f"已处理 {split_name}: {len(data)} 张图像")
 
     # 生成类别统计
     stats = {}
@@ -74,7 +74,7 @@ def prepare_dataset():
     with open(OUTPUT_ROOT / "stats.json", "w") as f:
         json.dump(stats, f, indent=2)
 
-    print(f"Dataset prepared at {OUTPUT_ROOT}")
+    print(f"数据集已准备完成，保存至: {OUTPUT_ROOT}")
 
 if __name__ == "__main__":
     prepare_dataset()

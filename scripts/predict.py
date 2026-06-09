@@ -33,10 +33,10 @@ def predict(image_path, model, transform, device, class_names):
         probs = torch.softmax(output, dim=1)
         pred = output.argmax(1).item()
 
-    print(f"\nImage: {image_path}")
-    print(f"Prediction: {class_names[pred]} (class {pred})")
-    print(f"Confidence: {probs[0][pred].item():.4f}")
-    print("\nTop 5 predictions:")
+    print(f"\n图像: {image_path}")
+    print(f"预测结果: {class_names[pred]} (类别 {pred})")
+    print(f"置信度: {probs[0][pred].item():.4f}")
+    print("\n前5个预测:")
     top5_probs, top5_indices = probs[0].topk(5)
     for prob, idx in zip(top5_probs, top5_indices):
         print(f"  {class_names[idx.item()]}: {prob.item():.4f}")

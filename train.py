@@ -44,7 +44,7 @@ def train_epoch(model, train_loader, criterion, optimizer, device):
     correct = 0
     total = 0
 
-    pbar = tqdm(train_loader, desc='Training')
+    pbar = tqdm(train_loader, desc='训练中')
     for images, labels in pbar:
         images = images.to(device)
         labels = labels.to(device)
@@ -60,7 +60,7 @@ def train_epoch(model, train_loader, criterion, optimizer, device):
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
 
-        pbar.set_postfix({'loss': f'{loss.item():.4f}', 'acc': f'{100.*correct/total:.2f}%'})
+        pbar.set_postfix({'损失': f'{loss.item():.4f}', '准确率': f'{100.*correct/total:.2f}%'})
 
     return total_loss / len(train_loader), 100. * correct / total
 
@@ -74,7 +74,7 @@ def validate_epoch(model, val_loader, criterion, device):
     all_labels = []
 
     with torch.no_grad():
-        for images, labels in tqdm(val_loader, desc='Validation'):
+        for images, labels in tqdm(val_loader, desc='验证中'):
             images = images.to(device)
             labels = labels.to(device)
 
@@ -96,7 +96,7 @@ def main():
 
     # 设备
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
+    print(f"使用设备: {device}")
 
     # 保存目录
     save_dir = Path(args.save_dir)
@@ -107,7 +107,7 @@ def main():
         config = json.load(f)
         num_classes = config['num_classes']
         class_names = [c['name'] for c in config['classes']]
-        print(f"Classes: {num_classes}")
+        print(f"类别数: {num_classes}")
 
     # 数据加载器
     train_dataset = GarbageDataset(
@@ -119,7 +119,7 @@ def main():
         transform=get_val_transforms()
     )
 
-    print(f"Train samples: {len(train_dataset)}, Val samples: {len(val_dataset)}")
+    print(f"训练样本: {len(train_dataset)}, 验证样本: {len(val_dataset)}")
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
@@ -138,7 +138,7 @@ def main():
     train_losses, val_losses = [], []
 
     for epoch in range(1, args.epochs + 1):
-        print(f"\nEpoch {epoch}/{args.epochs}")
+        print(f"\n第 {epoch}/{args.epochs} 轮")
         print("-" * 40)
 
         train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, device)
@@ -149,9 +149,9 @@ def main():
         train_losses.append(train_loss)
         val_losses.append(val_loss)
 
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
-        print(f"Learning Rate: {scheduler.get_last_lr()[0]:.6f}")
+        print(f"训练损失: {train_loss:.4f}, 训练准确率: {train_acc:.2f}%")
+        print(f"验证损失: {val_loss:.4f}, 验证准确率: {val_acc:.2f}%")
+        print(f"学习率: {scheduler.get_last_lr()[0]:.6f}")
 
         # 保存最佳模型
         if val_acc > best_acc:
@@ -162,11 +162,11 @@ def main():
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_acc': val_acc,
             }, save_dir / 'best_model.pth')
-            print(f"Best model saved! Val Acc: {val_acc:.2f}%")
+            print(f"最佳模型已保存! 验证准确率: {val_acc:.2f}%")
 
     # 绘制损失曲线
     plot_loss_curve(train_losses, val_losses, save_path='./outputs/loss_curve.png')
-    print(f"\nTraining complete! Best Val Acc: {best_acc:.2f}%")
+    print(f"\n训练完成! 最佳验证准确率: {best_acc:.2f}%")
 
 if __name__ == '__main__':
     main()

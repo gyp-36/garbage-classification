@@ -28,17 +28,17 @@ def get_classification_report(y_true, y_pred, class_names=None):
 
 def save_metrics(results, report, output_path):
     """保存评估指标到文件"""
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write("=" * 50 + "\n")
-        f.write("Garbage Classification Evaluation Results\n")
+        f.write("垃圾分类评估结果\n")
         f.write("=" * 50 + "\n\n")
 
-        f.write("Overall Metrics:\n")
+        f.write("总体指标:\n")
         f.write("-" * 30 + "\n")
         for key, value in results.items():
             f.write(f"{key}: {value:.4f}\n")
 
         f.write("\n" + "=" * 50 + "\n")
-        f.write("Classification Report:\n")
+        f.write("分类详细报告:\n")
         f.write("-" * 30 + "\n")
         f.write(report)

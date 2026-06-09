@@ -38,7 +38,7 @@ def evaluate(model, test_loader, device):
     all_probs = []
 
     with torch.no_grad():
-        for images, labels in tqdm(test_loader, desc='Evaluating'):
+        for images, labels in tqdm(test_loader, desc='评估中'):
             images = images.to(device)
             labels = labels.to(device)
 
@@ -57,7 +57,7 @@ def main():
     args = parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
+    print(f"使用设备: {device}")
 
     # 输出目录
     output_dir = Path(args.output_dir)
@@ -75,14 +75,14 @@ def main():
         transform=get_val_transforms()
     )
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=4)
-    print(f"Test samples: {len(test_dataset)}")
+    print(f"测试样本数: {len(test_dataset)}")
 
     # 模型
     model = create_model(num_classes=num_classes, pretrained=False)
     checkpoint = torch.load(args.checkpoint, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model = model.to(device)
-    print(f"Loaded checkpoint from epoch {checkpoint['epoch']}, Val Acc: {checkpoint['val_acc']:.2f}%")
+    print(f"已加载检查点，轮次: {checkpoint['epoch']}, 验证准确率: {checkpoint['val_acc']:.2f}%")
 
     # 评估
     y_true, y_pred, y_probs = evaluate(model, test_loader, device)
@@ -92,16 +92,16 @@ def main():
     report = get_classification_report(y_true, y_pred, class_names)
 
     print("\n" + "=" * 50)
-    print("Evaluation Results")
+    print("评估结果")
     print("=" * 50)
-    print(f"Accuracy: {results['accuracy']:.4f}")
-    print(f"Precision (weighted): {results['precision_weighted']:.4f}")
-    print(f"Recall (weighted): {results['recall_weighted']:.4f}")
-    print(f"F1 Score (weighted): {results['f1_weighted']:.4f}")
+    print(f"准确率: {results['accuracy']:.4f}")
+    print(f"精确率 (加权): {results['precision_weighted']:.4f}")
+    print(f"召回率 (加权): {results['recall_weighted']:.4f}")
+    print(f"F1分数 (加权): {results['f1_weighted']:.4f}")
 
     # 保存指标
     save_metrics(results, report, output_dir / 'metrics.txt')
-    print(f"\nMetrics saved to {output_dir}/metrics.txt")
+    print(f"\n指标已保存至: {output_dir}/metrics.txt")
 
     # 混淆矩阵
     cm = confusion_matrix(y_true, y_pred)
@@ -109,15 +109,15 @@ def main():
 
     # 错误分类统计
     misclassified = y_true != y_pred
-    print(f"\nMisclassified: {misclassified.sum()} / {len(y_true)} ({100*misclassified.sum()/len(y_true):.2f}%)")
+    print(f"\n分类错误: {misclassified.sum()} / {len(y_true)} (错误率 {100*misclassified.sum()/len(y_true):.2f}%)")
 
     # 每类错误统计
-    print("\nMisclassification by class:")
+    print("\n各类别错误统计:")
     for i, name in enumerate(class_names):
         class_mask = y_true == i
         if class_mask.sum() > 0:
             class_error = (y_pred[class_mask] != i).sum()
-            print(f"  {name}: {class_error}/{class_mask.sum()} errors")
+            print(f"  {name}: {class_error}/{class_mask.sum()} 个错误")
 
 if __name__ == '__main__':
     main()
