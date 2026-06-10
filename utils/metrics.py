@@ -20,9 +20,17 @@ def calculate_metrics(y_true, y_pred, class_names=None):
 
 def get_classification_report(y_true, y_pred, class_names=None):
     """生成分类报告"""
+    # 获取实际存在的类别
+    unique_labels = np.unique(np.concatenate([y_true, y_pred]))
+    if class_names is not None:
+        # 只使用实际存在的类别名称
+        target_names = [class_names[i] for i in unique_labels]
+    else:
+        target_names = None
     return classification_report(
         y_true, y_pred,
-        target_names=class_names,
+        labels=unique_labels,
+        target_names=target_names,
         zero_division=0
     )
 
