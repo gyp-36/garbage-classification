@@ -7,9 +7,13 @@ import pandas as pd
 
 def plot_confusion_matrix(cm, class_names, save_path=None, figsize=(16, 14)):
     """绘制混淆矩阵"""
-    plt.figure(figsize=figsize)
+    # 获取实际存在的类别
+    actual_classes = list(range(cm.shape[0]))
+    actual_names = [class_names[i] for i in actual_classes]
 
-    df_cm = pd.DataFrame(cm, index=class_names, columns=class_names)
+    plt.figure(figsize=(figsize[0], figsize[1]))
+
+    df_cm = pd.DataFrame(cm, index=actual_names, columns=actual_names)
     df_cm.index.name = 'Actual'
     df_cm.columns.name = 'Predicted'
 
@@ -17,7 +21,7 @@ def plot_confusion_matrix(cm, class_names, save_path=None, figsize=(16, 14)):
         df_cm, annot=True, fmt='d', cmap='Blues',
         annot_kws={"size": 10}
     )
-    plt.title('21类垃圾分类混淆矩阵')
+    plt.title('垃圾分类混淆矩阵')
     plt.tight_layout()
 
     if save_path:
