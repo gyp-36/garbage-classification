@@ -5,6 +5,10 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans', 'Arial Unicode MS', 'Noto Sans CJK SC']
+plt.rcParams['axes.unicode_minus'] = False
+
 def plot_confusion_matrix(cm, class_names, save_path=None, figsize=(16, 14)):
     """绘制混淆矩阵"""
     # 获取实际存在的类别
