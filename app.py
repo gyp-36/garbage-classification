@@ -53,15 +53,20 @@ for item in CLASS_CONFIG_DATA['classes']:
         CATEGORIES[parent]['items'].append(item['name'])
 
 # 高对比度终极样式
+# 高对比度终极样式（彻底修复 Gradio 全局样式覆盖问题）
 CUSTOM_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     --bg: #FAFAF9;
     --surface: #FFFFFF;
-    --text: #000000;             /* 全局纯黑 */
-    --border: #71717A;           /* 加深灰色边框 */
+    --border: #71717A;
     --shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+    /* 覆盖 Gradio 底层全局文本变量 */
+    --body-text-color: #000000 !important;
+    --block-label-text-color: #000000 !important;
+    --input-text-color: #000000 !important;
 }
 
 * {
@@ -79,7 +84,7 @@ CUSTOM_CSS = """
 .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 24px; border-bottom: 2px solid var(--border); margin-bottom: 32px; }
 .navbar-brand { display: flex; align-items: center; gap: 12px; }
 .navbar-logo { width: 40px; height: 40px; background: #000000; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-.navbar-title { font-size: 22px !important; font-weight: 800 !important; color: var(--text) !important; }
+.navbar-title { font-size: 22px !important; font-weight: 800 !important; color: #000000 !important; }
 
 /* 面板外框 */
 .product-panel {
@@ -94,31 +99,23 @@ CUSTOM_CSS = """
     border-bottom: 2px solid var(--border);
     background: #E4E4E7;
 }
-.panel-title-text { font-size: 16px !important; font-weight: 800 !important; color: var(--text) !important; }
+.panel-title-text { font-size: 16px !important; font-weight: 800 !important; color: #000000 !important; }
 
 .product-panel .form, .product-panel .image-container, .product-panel .gr-box {
     border: none !important;
     background: transparent !important;
 }
 
-/* ⚡ 识别结果字体强制加粗、变漆黑 ⚡ */
-.product-panel .label-container { padding: 16px !important; }
-.product-panel .label-item { 
-    color: #000000 !important; 
-    font-weight: 900 !important; 
-    font-size: 17px !important; 
-}
-.product-panel .confidence-text { 
-    color: #000000 !important; 
-    font-weight: 900 !important; 
-    font-size: 16px !important;
-}
-/* 提升结果标签中非 Top-1 类别的次级文字对比度 */
-.product-panel .shrunk-label, .product-panel .meta-text {
+/* ⚡ 暴力穿透：强制右侧识别结果面板内的所有子元素及标签文本必须是纯黑、特粗 ⚡ */
+.product-panel * {
     color: #000000 !important;
-    font-weight: 800 !important;
+    font-weight: 900 !important;
 }
-.product-panel .progress-bar { background-color: #000000 !important; }
+
+/* 保持结果面板进度条本身为深黑色 */
+.product-panel .progress-bar { 
+    background-color: #111827 !important; 
+}
 
 /* 静态指南平铺面板 */
 .guide-container {
@@ -134,9 +131,11 @@ CUSTOM_CSS = """
     border-radius: 8px;
     font-size: 16px !important;
     font-weight: 700 !important;
-    color: #000000 !important;
     line-height: 1.6 !important;
     border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.guide-row * {
+    color: #000000 !important;
 }
 .guide-row:last-child { margin-bottom: 0; }
 """
